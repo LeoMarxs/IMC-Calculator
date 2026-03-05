@@ -1,0 +1,128 @@
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
+from tkinter import messagebox
+import tkinter as tk
+
+# Função para atualizar barra
+def atualizar_barra(imc):
+
+    if imc < 18.5:
+        barra.configure(bootstyle="info")
+        classificacao.config(text="⚠️ Abaixo do peso")
+        valor = 20
+
+    elif imc < 25:
+        barra.configure(bootstyle="success")
+        classificacao.config(text="✅ Peso normal")
+        valor = 50
+
+    elif imc < 30:
+        barra.configure(bootstyle="warning")
+        classificacao.config(text="⚠️ Sobrepeso")
+        valor = 75
+
+    else:
+        barra.configure(bootstyle="danger")
+        classificacao.config(text="🚨 Obesidade")
+        valor = 100
+
+    barra["value"] = valor
+
+
+# Animação do botão
+def animar_botao():
+    botao.configure(bootstyle="success-outline")
+    janela.after(120, lambda: botao.configure(bootstyle="success"))
+
+
+# Cálculo IMC
+def calcular_imc():
+    try:
+        animar_botao()
+
+        peso = float(entry_peso.get())
+        altura = float(entry_altura.get())
+
+        imc = peso / (altura ** 2)
+
+        resultado.config(text=f"Seu IMC é {imc:.2f}")
+
+        atualizar_barra(imc)
+
+    except:
+        messagebox.showerror("Erro", "Digite valores válidos!")
+
+
+# Janela
+janela = ttk.Window(
+    title="Fitness IMC",
+    themename="darkly",
+    size=(380,500)
+)
+
+icone = tk.PhotoImage(file="icone.png")
+janela.iconphoto(False, icone)
+
+# Título
+titulo = ttk.Label(
+    janela,
+    text="💪 Fitness IMC",
+    font=("Segoe UI",24,"bold")
+)
+titulo.pack(pady=20)
+
+# Card principal
+card = ttk.Frame(janela, padding=20)
+card.pack(padx=20, fill=X)
+
+# Peso
+ttk.Label(card,text="⚖️ Peso (kg)").pack(anchor=W,pady=5)
+entry_peso = ttk.Entry(card)
+entry_peso.pack(fill=X,pady=5)
+
+# Altura
+ttk.Label(card,text="📏 Altura (m)").pack(anchor=W,pady=5)
+entry_altura = ttk.Entry(card)
+entry_altura.pack(fill=X,pady=5)
+
+# Botão
+botao = ttk.Button(
+    card,
+    text="Calcular IMC",
+    bootstyle="success",
+    command=calcular_imc
+)
+botao.pack(fill=X,pady=15)
+
+# Resultado
+resultado = ttk.Label(
+    janela,
+    text="",
+    font=("Segoe UI",16,"bold")
+)
+resultado.pack(pady=10)
+
+# Classificação
+classificacao = ttk.Label(
+    janela,
+    text="",
+    font=("Segoe UI",12)
+)
+classificacao.pack()
+
+# Barra de IMC
+barra = ttk.Progressbar(
+    janela,
+    length=250,
+    bootstyle="success-striped"
+)
+barra.pack(pady=20)
+
+# Escala visual
+ttk.Label(
+    janela,
+    text="Abaixo | Normal | Sobrepeso | Obesidade",
+    font=("Segoe UI",9)
+).pack()
+
+janela.mainloop()
